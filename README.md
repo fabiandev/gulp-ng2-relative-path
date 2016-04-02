@@ -14,7 +14,7 @@ npm install gulp-ng2-relative-path --save-dev
 
 ```js
 var defaults = {
-  base: './',                    // Source base folder
+  base: './',                   // Source base folder
   appBase: '/',                 // Angular app base folder
   templateExtension: '.html',   // Template file extension
   modifyPath: false             // Function to additionally modify file paths
@@ -38,4 +38,4 @@ var result = gulp.src('./src/ts/**/*.ts')
 
 return result.js
   .pipe(gulp.dest('./dist/app'));
-``
+```
