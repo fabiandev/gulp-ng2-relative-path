@@ -7,11 +7,8 @@ var isarray = require('isarray');
 var join = require('path').join;
 var dirname = require('path').dirname;
 
-
-// -----------------------------------------------------------------------------
-// Configuration.
 var defaults = {
-    base: '/',
+    base: './',
     appBase: '/',
     templateExtension: '.html',
     modifyPath: false,

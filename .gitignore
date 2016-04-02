@@ -32,3 +32,6 @@ node_modules
 .tsdrc
 
 test/fixtures/result_actual*
+
+# NPM
+.npmignore
