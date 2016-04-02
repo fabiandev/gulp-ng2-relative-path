@@ -6,6 +6,7 @@ var fs = require('fs');
 var isarray = require('isarray');
 var join = require('path').join;
 var dirname = require('path').dirname;
+var basename = require('path').basename;
 
 var defaults = {
     base: './',
@@ -152,8 +153,10 @@ module.exports = function parser(file, options) {
     }
 
     function adjustPath(path) {
-        var path = join(base, path).replace(pattern, opts.appBase + '/');
-
+        var filename = basename(path);
+        var path = dirname(file.path).replace(pattern, opts.appBase + '/');
+        path += '/' + filename;
+        
         // Angular2 issue: https://github.com/angular/angular/issues/4974
         if (opts.type === 'css') {
           path = '..' + path;
