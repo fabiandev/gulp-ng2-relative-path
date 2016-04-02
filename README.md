@@ -27,7 +27,7 @@ var defaults = {
 var ng2RelativePath = require('gulp-ng2-relative-path');
 
 var result = gulp.src('./src/ts/**/*.ts')
-  .pipe(inlineNg2Template({
+  .pipe(ng2RelativePath({
     base: './src/ts',
     appBase: '/app',
     modifyPath: function (path) {
