@@ -1,6 +1,6 @@
 {
   "name": "gulp-ng2-relative-path",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "Gulp plugin to support relative paths in Angular2 for templates and styles.",
   "repository": "https://github.com/fabianweb/gulp-ng2-relative-path.git",
   "main": "index.js",
@@ -23,7 +23,5 @@
     "isarray": "0.0.1",
     "clone": "~1.0.2"
   },
-  "devDependencies": {
-
-  }
+  "devDependencies": {}
 }
