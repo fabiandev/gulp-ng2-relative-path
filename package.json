@@ -17,7 +17,6 @@
   "author": "Fabian Pirklbauer",
   "license": "MIT",
   "dependencies": {
-    "es6-templates": "~0.2.2",
     "extend": "~3.0.0",
     "gulp-util": "~3.0.6",
     "through2": "~2.0.0",
@@ -25,10 +24,6 @@
     "clone": "~1.0.2"
   },
   "devDependencies": {
-    "color": "~0.10.1",
-    "jade": "^1.11.0",
-    "mocha": "~2.2.5",
-    "stylus": "^0.53.0",
-    "vinyl": "~0.5.1"
+
   }
 }

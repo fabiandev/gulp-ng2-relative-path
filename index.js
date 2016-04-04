@@ -7,7 +7,7 @@ var through = require('through2');
 var PLUGIN_NAME = 'gulp-ng2-relative-path';
 
 module.exports = exports = function inline(options) {
-  return through.obj(function (file, enc, cb) {
+  return through.obj(function(file, enc, cb) {
     if (file.isNull()) {
       cb(null, file);
       return;
@@ -23,7 +23,9 @@ module.exports = exports = function inline(options) {
 
       this.push(file);
     } catch (err) {
-      this.emit('error', new gutil.PluginError(PLUGIN_NAME, err, {fileName: file.path}));
+      this.emit('error', new gutil.PluginError(PLUGIN_NAME, err, {
+        fileName: file.path
+      }));
     }
 
     cb();

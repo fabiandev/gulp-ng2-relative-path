@@ -35,3 +35,7 @@ test/fixtures/result_actual*
 
 # NPM
 .npmignore
+
+# Other
+.editorconfig
+.DS_Store

@@ -2,7 +2,6 @@
 
 var clone = require('clone');
 var extend = require('extend');
-var fs = require('fs');
 var isarray = require('isarray');
 var join = require('path').join;
 var dirname = require('path').dirname;
@@ -12,14 +11,12 @@ var defaults = {
     base: './',
     appBase: '/',
     templateExtension: '.html',
+    processTemplatePaths: true,
+    processStylePaths: true,
     modifyPath: false,
-    templateProcessor: defaultProcessor,
-    styleProcessor: defaultProcessor
+    modifyTemplatePath: false,
+    modifyStylePath: false
 };
-
-function defaultProcessor(path, file) {
-    return file;
-}
 
 var htmlOptions = function(opts) {
     return {
@@ -48,20 +45,16 @@ module.exports = function parser(file, options) {
     var opts = extend({}, defaults, (options || {}));
     var lines = file.contents.toString().replace(/\r/g, '').split('\n');
     var start_line_idx, end_line_idx, frag;
-    var HTML = false;
-    var CSS = false;
 
     var base = join(process.cwd(), opts.base);
     var pattern = new RegExp('^(' + base + '/?)');
 
-    if (opts.templateProcessor) {
-        HTML = true;
+    if (opts.processTemplatePaths) {
         extend(opts, htmlOptions(opts));
         execute();
         reset();
     }
-    if (opts.styleProcessor) {
-        CSS = true;
+    if (opts.processStylePaths) {
         extend(opts, cssOptions());
         execute();
         reset();
@@ -85,22 +78,26 @@ module.exports = function parser(file, options) {
         if (opts.start_pattern.test(line)) {
             start_line_idx = i;
         }
+
         if (opts.end_pattern.test(line)) {
-            // Match end pattern without start.
-            // end_line_idx is till equal to previous loop turn value.
-            if (start_line_idx <= end_line_idx) return;
+            if (start_line_idx <= end_line_idx) {
+                return;
+            }
             end_line_idx = i;
         }
     }
 
     function getFragment() {
         var fragStart, fragEnd;
-        if (start_line_idx < 0 || end_line_idx < 0) return;
-        // One liner.
+
+        if (start_line_idx < 0 || end_line_idx < 0) {
+            return;
+        }
+
         if (start_line_idx === end_line_idx) {
             frag = opts.oneliner_pattern.exec(lines[start_line_idx])[0];
         }
-        // One or more lines.
+
         if (start_line_idx < end_line_idx) {
             fragStart = opts.start_pattern.exec(lines[start_line_idx])[0];
             fragEnd = opts.end_pattern.exec(lines[end_line_idx])[0];
@@ -122,7 +119,8 @@ module.exports = function parser(file, options) {
         var line = lines[start_line_idx];
         var assetFiles = '';
 
-        var finalUrls = [], finalString = '';
+        var finalUrls = [],
+            finalString = '';
 
         urls.forEach(function(url) {
             var finalUrl = adjustPath(url);
@@ -130,25 +128,33 @@ module.exports = function parser(file, options) {
                 finalUrl = opts.modifyPath(finalUrl);
             }
 
+            if (opts.type === 'html' && opts.modifyTemplatePath) {
+                finalUrl = opts.modifyTemplatePath(finalUrl);
+            }
+
+            if (opts.type === 'css' && opts.modifyStylePath) {
+                finalUrl = opts.modifyStylePath(finalUrl);
+            }
+
             finalUrls.push(finalUrl);
         });
 
         if (opts.type === 'html') {
-          finalString = '"' + finalUrls.pop() + '"';
+            finalString = '"' + finalUrls.pop() + '"';
         } else {
-          finalString = JSON.stringify(finalUrls);
+            finalString = JSON.stringify(finalUrls);
         }
 
         assetFiles = opts.prop + ': ' + finalString;
 
         if (start_line_idx === end_line_idx) {
-          lines[start_line_idx] = line.replace(opts.oneliner_pattern, assetFiles);
+            lines[start_line_idx] = line.replace(opts.oneliner_pattern, assetFiles);
         }
 
         if (start_line_idx < end_line_idx) {
-          if (/(,)$/.test(lines[end_line_idx])) assetFiles += ',';
-          lines[start_line_idx] = line.replace(opts.start_pattern, assetFiles);
-          lines.splice(start_line_idx + 1, end_line_idx - start_line_idx);
+            if (/(,)$/.test(lines[end_line_idx])) assetFiles += ',';
+            lines[start_line_idx] = line.replace(opts.start_pattern, assetFiles);
+            lines.splice(start_line_idx + 1, end_line_idx - start_line_idx);
         }
     }
 
@@ -156,10 +162,10 @@ module.exports = function parser(file, options) {
         var filename = basename(path);
         var path = dirname(file.path).replace(pattern, opts.appBase + '/');
         path += '/' + filename;
-        
+
         // Angular2 issue: https://github.com/angular/angular/issues/4974
         if (opts.type === 'css') {
-          path = '..' + path;
+            path = '..' + path;
         }
 
         return path;
@@ -169,7 +175,5 @@ module.exports = function parser(file, options) {
         start_line_idx = undefined;
         end_line_idx = undefined;
         frag = undefined;
-        HTML = false;
-        CSS = false;
     }
 };
