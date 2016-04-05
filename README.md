@@ -21,8 +21,8 @@ var defaults = {
   templateExtension: '.html',   // Template file extension
   processTemplatePaths: true,   // Enable or disable template paths processing
   processStylePaths: true,      // Enable or disable style paths processing
-  modifyPath: false             // Function to additionally modify all file paths
-  modifyTemplatePath: false     // Function to modify only template paths
+  modifyPath: false,            // Function to additionally modify all file paths
+  modifyTemplatePath: false,    // Function to modify only template paths
   modifyStylePath: false        // Function to modify only style paths
 };
 ```
