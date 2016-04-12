@@ -3,6 +3,8 @@
 var clone = require('clone');
 var extend = require('extend');
 var isarray = require('isarray');
+var slash = require('slash');
+var escape = require('escape-string-regexp');
 var join = require('path').join;
 var dirname = require('path').dirname;
 var basename = require('path').basename;
@@ -47,7 +49,7 @@ module.exports = function parser(file, options) {
     var start_line_idx, end_line_idx, frag;
 
     var base = join(process.cwd(), opts.base);
-    var pattern = new RegExp('^(' + base + '/?)');
+    var pattern = new RegExp('^(' + escape(base) + '?)');
 
     if (opts.processTemplatePaths) {
         extend(opts, htmlOptions(opts));
@@ -158,17 +160,18 @@ module.exports = function parser(file, options) {
         }
     }
 
-    function adjustPath(path) {
-        var filename = basename(path);
-        var path = dirname(file.path).replace(pattern, opts.appBase + '/');
-        path += '/' + filename;
+    function adjustPath(url) {
+        var filename = basename(url);
+        var path = dirname(file.path).replace(pattern, opts.appBase);
 
         // Angular2 issue: https://github.com/angular/angular/issues/4974
         if (opts.type === 'css') {
             path = '..' + path;
         }
 
-        return path;
+        path = path + '/' + filename;
+
+        return slash(path);
     }
 
     function reset() {
